@@ -2,9 +2,11 @@ package account
 
 import (
 	"errors"
+	"math/rand/v2"
 	"net/url"
 	"time"
-	"math/rand/v2"
+
+	"github.com/fatih/color"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{}[]!@#$%^*()_-")
@@ -36,6 +38,12 @@ func NewAccount(login, password, urlStr string) (*Account, error) {
 		acc.generatePassword(12)
 	}
 	return acc, nil
+}
+
+func (acc *Account) Output() {
+	color.Cyan(acc.Login)
+	color.Cyan(acc.Password)
+	color.Cyan(acc.Url)
 }
 
 func (acc *Account) generatePassword(passLen int) {
