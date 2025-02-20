@@ -55,10 +55,24 @@ func NewVault(db DB) *VaultWithDB {
 	}
 }
 
+func (vault *VaultWithDB) AddAccount(acc Account) {
+	vault.Accounts = append(vault.Accounts, acc)
+	vault.save()
+}
+
 func (vault *Vault) toBytes() ([]byte, error) {
 	data, err := json.MarshalIndent(vault, "", "  ")
 	if err != nil {
 		return nil, err
 	}
 	return data, nil
+}
+
+func (vault *VaultWithDB) save() {
+	vault.updatedAt = time.Now()
+	data, err := vault.toBytes()
+	if err != nil {
+		color.Red("Не удаётся преобразовать в json")
+	}
+	vault.db.Write(data)
 }
