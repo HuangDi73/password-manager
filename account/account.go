@@ -4,7 +4,10 @@ import (
 	"errors"
 	"net/url"
 	"time"
+	"math/rand/v2"
 )
+
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{}[]!@#$%^*()_-")
 
 type Account struct {
 	Login     string    `json:"login"`
@@ -29,5 +32,16 @@ func NewAccount(login, password, urlStr string) (*Account, error) {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
+	if login == "" {
+		acc.generatePassword(12)
+	}
 	return acc, nil
+}
+
+func (acc *Account) generatePassword(passLen int) {
+	pass := make([]rune, passLen)
+	for i := range pass {
+		pass[i] = letters[rand.IntN(len(letters))]
+	}
+	acc.Password = string(pass)
 }
