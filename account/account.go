@@ -34,7 +34,7 @@ func NewAccount(login, password, urlStr string) (*Account, error) {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	if login == "" {
+	if password == "" {
 		acc.generatePassword(12)
 	}
 	return acc, nil

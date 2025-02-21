@@ -26,32 +26,31 @@ type VaultWithDB struct {
 func NewVault(db DB) *VaultWithDB {
 	data, err := db.Read()
 	if err != nil {
-		color.Red("Не удалось прочитать файл")
 		return &VaultWithDB{
-			Vault: &Vault{
-				Accounts:  []Accounts{},
+			Vault: Vault{
+				Accounts:  []Account{},
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
-			db: DB,
+			db: db,
 		}
 	}
 	var vault Vault
-	err := json.Unmarshal(data, &vault)
+	err = json.Unmarshal(data, &vault)
 	if err != nil {
 		color.Red("Не удалось разобрать json")
 		return &VaultWithDB{
-			Vault: &Vault{
-				Accounts:  []Accounts{},
+			Vault: Vault{
+				Accounts:  []Account{},
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
-			db: DB,
+			db: db,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
-		db:    DB,
+		db:    db,
 	}
 }
 
@@ -69,7 +68,7 @@ func (vault *Vault) toBytes() ([]byte, error) {
 }
 
 func (vault *VaultWithDB) save() {
-	vault.updatedAt = time.Now()
+	vault.UpdatedAt = time.Now()
 	data, err := vault.toBytes()
 	if err != nil {
 		color.Red("Не удаётся преобразовать в json")
