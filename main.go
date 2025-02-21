@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 )
 
 var variants = []string{
@@ -27,6 +28,10 @@ var actions = map[string]func(*account.VaultWithDB){
 
 func main() {
 	fmt.Println("__Менеджер паролей__")
+	err := godotenv.Load()
+	if err != nil {
+		color.Red("Не удалость найти .env файл")
+	}
 	vault := account.NewVault(files.NewJsonDB("data.json"))
 Menu:
 	for {
