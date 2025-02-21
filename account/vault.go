@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -57,6 +58,33 @@ func NewVault(db DB) *VaultWithDB {
 func (vault *VaultWithDB) AddAccount(acc Account) {
 	vault.Accounts = append(vault.Accounts, acc)
 	vault.save()
+}
+
+func (vault *VaultWithDB) DeleteAccountsByUrl(url string) bool {
+	var accounts []Account
+	isDeleted := false
+	for _, acc := range vault.Accounts {
+		isMatched := strings.Contains(acc.Url, url)
+		if !isMatched {
+			accounts = append(accounts, acc)
+			continue
+		}
+		isDeleted = true
+	}
+	vault.Accounts = accounts
+	vault.save()
+	return isDeleted
+}
+
+func (vault *VaultWithDB) FindAccounts(str string, checker func(Account, string) bool) []Account {
+	var accounts []Account
+	for _, acc := range vault.Accounts {
+		isMatched := checker(acc, str)
+		if isMatched {
+			accounts = append(accounts, acc)
+		}
+	}
+	return accounts
 }
 
 func (vault *Vault) toBytes() ([]byte, error) {
