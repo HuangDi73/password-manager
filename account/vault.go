@@ -1,6 +1,7 @@
 package account
 
 import (
+	"demo/password-manager/encrypter"
 	"encoding/json"
 	"strings"
 	"time"
@@ -21,10 +22,11 @@ type Vault struct {
 
 type VaultWithDB struct {
 	Vault
-	db DB
+	db  DB
+	enc encrypter.Encrypter
 }
 
-func NewVault(db DB) *VaultWithDB {
+func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 	data, err := db.Read()
 	if err != nil {
 		return &VaultWithDB{
@@ -34,12 +36,15 @@ func NewVault(db DB) *VaultWithDB {
 				UpdatedAt: time.Now(),
 			},
 			db: db,
+			enc: enc,
 		}
 	}
+	decryptedData := enc.Decrypt(data)
 	var vault Vault
-	err = json.Unmarshal(data, &vault)
+	err = json.Unmarshal(decryptedData, &vault)
+	color.Cyan("Найдено %d аккаунтов", len(vault.Accounts))
 	if err != nil {
-		color.Red("Не удалось разобрать json")
+		color.Red("Не удалось разобрать vault файл")
 		return &VaultWithDB{
 			Vault: Vault{
 				Accounts:  []Account{},
@@ -47,11 +52,13 @@ func NewVault(db DB) *VaultWithDB {
 				UpdatedAt: time.Now(),
 			},
 			db: db,
+			enc: enc,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
 		db:    db,
+		enc: enc,
 	}
 }
 
@@ -98,8 +105,9 @@ func (vault *Vault) toBytes() ([]byte, error) {
 func (vault *VaultWithDB) save() {
 	vault.UpdatedAt = time.Now()
 	data, err := vault.toBytes()
+	encData := vault.enc.Encrypt(data)
 	if err != nil {
 		color.Red("Не удаётся преобразовать в json")
 	}
-	vault.db.Write(data)
+	vault.db.Write(encData)
 }

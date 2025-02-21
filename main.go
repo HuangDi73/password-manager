@@ -2,6 +2,7 @@ package main
 
 import (
 	"demo/password-manager/account"
+	"demo/password-manager/encrypter"
 	"demo/password-manager/files"
 	"fmt"
 	"strings"
@@ -32,7 +33,7 @@ func main() {
 	if err != nil {
 		color.Red("Не удалость найти .env файл")
 	}
-	vault := account.NewVault(files.NewJsonDB("data.json"))
+	vault := account.NewVault(files.NewJsonDB("data.vault"), *encrypter.NewEncrypter())
 Menu:
 	for {
 		choices := promptData(variants...)
