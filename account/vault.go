@@ -35,15 +35,13 @@ func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
 			enc: enc,
 		}
 	}
 	decryptedData := enc.Decrypt(data)
 	var vault Vault
-	err = json.Unmarshal(decryptedData, &vault)
-	color.Cyan("Найдено %d аккаунтов", len(vault.Accounts))
-	if err != nil {
+	if err = json.Unmarshal(decryptedData, &vault); err != nil {
 		color.Red("Не удалось разобрать vault файл")
 		return &VaultWithDB{
 			Vault: Vault{
@@ -51,14 +49,15 @@ func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
 			enc: enc,
 		}
 	}
+	color.Cyan("Найдено %d аккаунтов", len(vault.Accounts))
 	return &VaultWithDB{
 		Vault: vault,
 		db:    db,
-		enc: enc,
+		enc:   enc,
 	}
 }
 

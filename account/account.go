@@ -23,8 +23,7 @@ func NewAccount(login, password, urlStr string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("неверный формат логина")
 	}
-	_, err := url.ParseRequestURI(urlStr)
-	if err != nil {
+	if _, err := url.ParseRequestURI(urlStr); err != nil {
 		return nil, err
 	}
 	acc := &Account{

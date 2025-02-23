@@ -29,8 +29,7 @@ var actions = map[string]func(*account.VaultWithDB){
 
 func main() {
 	fmt.Println("__Менеджер паролей__")
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		color.Red("Не удалость найти .env файл")
 	}
 	vault := account.NewVault(files.NewJsonDB("data.vault"), *encrypter.NewEncrypter())
@@ -58,8 +57,7 @@ func createAccount(vault *account.VaultWithDB) {
 
 func deleteAccounts(vault *account.VaultWithDB) {
 	url := promptData("Введите url для поиска")
-	isDeleted := vault.DeleteAccountsByUrl(url)
-	if isDeleted {
+	if isDeleted := vault.DeleteAccountsByUrl(url); isDeleted {
 		color.Green("Аккаунты удалены")
 	} else {
 		color.Red("Аккаунты не найдены")

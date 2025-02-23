@@ -30,8 +30,7 @@ func (db JsonDB) Write(data []byte) {
 		color.Red("Не удаётся создать файл")
 	}
 	defer file.Close()
-	_, err = file.Write(data)
-	if err != nil {
+	if _, err = file.Write(data); err != nil {
 		color.Red("Не удаётся записать файл")
 	}
 	color.Green("Запись успешна")
